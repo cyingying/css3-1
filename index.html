@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Preview Slidershow</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    
+    <div class="slider">
+        <div class="main" id='template_main'>
+            <div class="main-i" id='main_{{index}}'>
+                <div class="caption">
+                    <h2>{{h2}}</h2>
+                    <h3>{{h3}}</h3>
+                </div>
+                <img src="img/{{index}}.jpg" class="picture" alt="">
+            </div>
+        </div>
+        <div class="ctrl" id="template_ctrl">
+            <a href="javascript:switchSlider({{index}});" class="ctrl-i" id="ctrl_{{index}}"><img src="img/{{index}}.jpg" alt=""></a>
+        </div>
+    </div>
+
+<script>
+    //1.数据定义 (实际生产环境，应由后台给出）
+    var data = [
+        {img:1,h2:'Create',h3:'DURUVB'},
+        {img:2,h2:'Frivbb',h3:'SHCUIBC'},
+        {img:3,h2:'Dewgje',h3:'WJCBDV'},
+        {img:4,h2:'Adsgbb',h3:'UUGBX'},
+        {img:5,h2:'Esdvgb',h3:'HDGAEIF'},
+        {img:6,h2:'Wsvbdb',h3:'LINIB'},
+        {img:7,h2:'Gdshbb',h3:'LKOBBI'},
+    ];
+    //2.定义通用函数获取dom元素
+    var g = function(id) {
+        if(id.substr(0,1) == '.'){
+            return document.getElementsByClassName(id.substr(1));
+        }
+        return document.getElementById(id);
+    }
+    //3.添加所有幻灯片以及按钮
+    function addSliders() {
+       //获取模板
+       var tpl_main = g('template_main').innerHTML
+                           .replace(/^\s*/,'')
+                           .replace(/\s*$/,'');
+       var tpl_ctrl = g('template_ctrl').innerHTML
+                           .replace(/^\s*/,'')
+                           .replace(/\s*$/,'');
+       //定义最终输出html的变量
+       var out_main = [];
+       var out_ctrl = [];
+       //遍历数据
+       for(i in data){
+           var _html_main = tpl_main
+                   .replace(/{{index}}/g,data[i].img)
+                   .replace(/{{h2}}/g,data[i].h2)
+                   .replace(/{{h3}}/g,data[i].h3);
+           var _html_ctrl = tpl_ctrl
+                   .replace(/{{index}}/g,data[i].img);
+           out_main.push(_html_main);
+           out_ctrl.push(_html_ctrl);
+       }
+       //把html回写到dom中
+       g('template_main').innerHTML = out_main.join('');
+       g('template_ctrl').innerHTML = out_ctrl.join('');
+    }
+    //5.幻灯片切换
+    function switchSlider(n) {
+        //获取要展示的幻灯片和控制按钮
+        var main = g('main_'+n);
+        var ctrl = g('ctrl_'+n);
+        //获取所有的幻灯片和控制按钮
+        var clear_main = g('.main-i');
+        var clear_ctrl = g('.ctrl-i');
+        for(var i = 0;i<clear_main.length;i++){
+             clear_main[i].className = clear_main[i].className
+                .replace('main-i_active','');
+             clear_ctrl[i].className = clear_ctrl[i].className
+                .replace('ctrl-i_active','');
+        }
+        main.className += ' main-i_active';
+        ctrl.className += ' ctrl-i_active';
+    }
+    //6.动态调整图片，使其水平垂直居中
+    function movePicture() {
+        var pictures = g('.picture');
+        for(var i = 0;i < pictures.length;i++) {
+            pictures[i].style.marginTop =  (-1 * pictures[i].clientHeight/2 ) + 'px';
+        }
+    }
+    //4.定义何时输出
+    window.onload = function() {
+        addSliders();
+        switchSlider(1);
+        setTimeout(function(){
+            movePicture()
+        },10);
+    }
+</script>
+
+</body>
+</html>
